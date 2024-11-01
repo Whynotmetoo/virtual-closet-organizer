@@ -1,102 +1,96 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
-
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import React, { useState } from 'react';
+import { View, StyleSheet, Button } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-export default function TabTwoScreen() {
+const activities = [
+  { label: "Go for a Walk", value: "walk" },
+  { label: "Gym Workout", value: "gym" },
+  { label: "Casual Hangout", value: "hangout" },
+  { label: "Formal Meeting", value: "meeting" },
+];
+
+const feelings = [
+  { label: "Happy", value: "happy" },
+  { label: "Relaxed", value: "relaxed" },
+  { label: "Confident", value: "confident" },
+  { label: "Sporty", value: "sporty" },
+];
+
+export default function OutfitRecommendationScreen() {
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(activities[0].value);
+  const [feelingOpen, setFeelingOpen] = useState(false);
+  const [selectedFeeling, setSelectedFeeling] = useState(feelings[0].value);
+
+  const handleRecommendation = () => {
+    alert(`Recommended outfit for a ${selectedFeeling} day with a ${selectedActivity} activity!`);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
+    <ThemedView style={styles.container}>
+      <ThemedText style={styles.title}>Choose Your Activity and Feeling</ThemedText>
+
+      <ThemedText style={styles.label}>Select Activity:</ThemedText>
+      <ThemedView style={activityOpen ? { zIndex: 2 } : {}}>
+        <DropDownPicker
+          open={activityOpen}
+          value={selectedActivity}
+          items={activities}
+          setOpen={setActivityOpen}
+          setValue={setSelectedActivity}
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+        />
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+
+      <ThemedText style={styles.label}>Select Feeling:</ThemedText>
+      <ThemedView style={feelingOpen ? { zIndex: 1 } : {}}>
+        <DropDownPicker
+          open={feelingOpen}
+          value={selectedFeeling}
+          items={feelings}
+          setOpen={setFeelingOpen}
+          setValue={setSelectedFeeling}
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+        />
+      </ThemedView>
+
+
+      <ThemedView style={styles.buttonContainer}>
+        <Button title="Get Outfit Recommendation" onPress={handleRecommendation} />
+      </ThemedView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 18,
+    marginVertical: 10,
+  },
+  dropdown: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  dropdownContainer: {
+    width: '100%',
+  },
+  buttonContainer: {
+    width: '100%',
+    marginTop: 20,
   },
 });
