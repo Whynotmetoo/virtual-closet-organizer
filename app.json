@@ -27,7 +27,13 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app needs accesses your photos to upload the photo of your cloth."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
