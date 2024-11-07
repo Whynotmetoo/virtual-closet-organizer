@@ -1,4 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -32,7 +33,10 @@ export default function HomeScreen() {
       </ThemedView>
       <ThemedView>
         <ThemedText style={styles.boldText}>Upload a new cloth</ThemedText>
-        <TouchableOpacity style={styles.iconButton} onPress={() => alert('Button Pressed')}>
+        <TouchableOpacity 
+          style={styles.iconButton} 
+          onPress={() => router.push({pathname: '/upload', params: { title: 'Upload' }})}
+        >
           <Entypo name="plus" size={40} color="black" />
         </TouchableOpacity>
       </ThemedView>
