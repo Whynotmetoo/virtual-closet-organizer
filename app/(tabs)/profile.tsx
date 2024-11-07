@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Image, Platform } from 'react-native';
 
@@ -8,10 +9,25 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function AccountScreen() {
+  const [headerImageUri, setHeaderImageUri] = useState('');
+  const [headerBackgroundImageUri, setHeaderBackgroundImageUri] = useState('');
+
+  useEffect(() => {
+    const randomSeed = Math.random().toString(36).substring(7); 
+    setHeaderImageUri(`https://api.dicebear.com/9.x/fun-emoji/png?seed=${randomSeed}&radius=50&backgroundType=gradientLinear&size=300&scale=80`);
+    setHeaderBackgroundImageUri('https://picsum.photos/600');
+  }, []);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="person-circle" style={styles.headerImage} />}>
+      headerImage={
+        headerImageUri ? <Image
+          source={{ uri: headerImageUri }}
+          style={styles.headerImage}
+        /> : <Ionicons size={310} name="person-circle" style={styles.headerImage} />
+      }>
+        
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Account</ThemedText>
       </ThemedView>
@@ -76,10 +92,12 @@ export default function AccountScreen() {
 
 const styles = StyleSheet.create({
   headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
     position: 'absolute',
+    bottom: -18,
+    left: -6,
+    width: 150,
+    height: 150,
+    overflow: 'hidden',
   },
   titleContainer: {
     flexDirection: 'row',
