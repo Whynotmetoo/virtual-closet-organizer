@@ -1,83 +1,88 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { StyleSheet, Image, Platform } from 'react-native';
+
+import { Collapsible } from '@/components/Collapsible';
+import { ExternalLink } from '@/components/ExternalLink';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-export default function ProfileScreen() {
-  const user = {
-    name: "Don",
-    email: "don@example.com",
-    avatar: "https://picsum.photos/500",
-  };
-
-  const handleEditProfile = () => {
-    alert("Edit Profile");
-  };
-
-  const handleLogout = () => {
-    alert("Logged out");
-  };
-
+export default function AccountScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <Image source={{ uri: user.avatar }} style={styles.avatar} />
-      <ThemedText style={styles.name}>{user.name}</ThemedText>
-      <ThemedText style={styles.email}>{user.email}</ThemedText>
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+      headerImage={<Ionicons size={310} name="person-circle" style={styles.headerImage} />}>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="title">Account</ThemedText>
+      </ThemedView>
+      <ThemedText>Manage your account settings and preferences here.</ThemedText>
       
-      <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
-        <ThemedText style={styles.buttonText}>Edit Profile</ThemedText>
-      </TouchableOpacity>
+      <Collapsible title="Personal Information">
+        <ThemedText>
+          View and edit your personal information such as your name, email, and phone number.
+        </ThemedText>
+        <ExternalLink href="https://example.com/edit-profile">
+          <ThemedText type="link">Edit Profile</ThemedText>
+        </ExternalLink>
+      </Collapsible>
 
-      <TouchableOpacity style={[styles.button, styles.favoriteButton]} onPress={handleLogout}>
-        <ThemedText style={styles.buttonText}>My Favorite</ThemedText>
-      </TouchableOpacity>
-      
-      <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-        <ThemedText style={styles.buttonText}>Logout</ThemedText>
-      </TouchableOpacity>
-    </ThemedView>
+      <Collapsible title="Security Settings">
+        <ThemedText>
+          Manage your password, enable two-factor authentication, and adjust other security settings to keep your account safe.
+        </ThemedText>
+        <ExternalLink href="https://example.com/security">
+          <ThemedText type="link">Security Settings</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+
+      <Collapsible title="Notifications">
+        <ThemedText>
+          Control your notification preferences, including email, push, and SMS notifications.
+        </ThemedText>
+        <ExternalLink href="https://example.com/notifications">
+          <ThemedText type="link">Notification Settings</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+
+      <Collapsible title="Payment Methods">
+        <ThemedText>
+          Add, edit, or remove payment methods linked to your account. You can manage your credit card and PayPal information.
+        </ThemedText>
+        <ExternalLink href="https://example.com/payment-methods">
+          <ThemedText type="link">Manage Payment Methods</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+
+      <Collapsible title="Privacy Settings">
+        <ThemedText>
+          Control who can see your profile and adjust other privacy-related settings.
+        </ThemedText>
+        <ExternalLink href="https://example.com/privacy">
+          <ThemedText type="link">Privacy Settings</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+
+      <Collapsible title="Account Deletion">
+        <ThemedText>
+          If you want to delete your account, you can start the process here. Note that this action is irreversible.
+        </ThemedText>
+        <ExternalLink href="https://example.com/delete-account">
+          <ThemedText type="link">Delete Account</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+    </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+  headerImage: {
+    color: '#808080',
+    bottom: -90,
+    left: -35,
+    position: 'absolute',
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 20,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  email: {
-    fontSize: 16,
-    color: 'gray',
-    marginBottom: 20,
-  },
-  button: {
-    width: '80%',
-    padding: 15,
-    backgroundColor: '#007AFF',
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  favoriteButton: {
-    backgroundColor: '#FF3B30',
-  },
-  logoutButton: {
-    backgroundColor: 'grey',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
+  titleContainer: {
+    flexDirection: 'row',
+    gap: 8,
   },
 });
