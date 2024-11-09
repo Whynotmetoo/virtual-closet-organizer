@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,13 @@ SECRET_KEY = 'django-insecure-xpj+oid5vb9zaeb-a4fycj7i8zr2a9@rj@k9_sdwh*s8i1+yh6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]',  # IPv6 localhost
+]
+if DEBUG:
+    ALLOWED_HOSTS = ['*']  # Allows all hosts in development
 
 
 # Application definition
@@ -139,18 +146,44 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:19006",
-    "http://localhost:19000",
+    "http://localhost:19006",  # Expo web
+    "http://localhost:19000",  # Expo default
+    "http://localhost:8000",   # Django development server
+    "http://127.0.0.1:8000",  # Django alternative localhost
+    "http://localhost:3000",   # Additional React development
+    "exp://localhost:19000",   # Expo Go app
+    "exp://127.0.0.1:19000",  # Expo Go alternative
 ]
+
+# Add CORS_ALLOW_CREDENTIALS for JWT handling
+CORS_ALLOW_CREDENTIALS = True
 
 #REST
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+}
+
+# Add to settings.py
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # Media Files

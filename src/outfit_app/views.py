@@ -20,10 +20,10 @@ class OutfitViewSet(viewsets.ModelViewSet):
         activity = request.data.get('activity')
         feeling = request.data.get('feeling')
         
-        # Basic suggestion logic (to be expanded)
+        
         clothes = self.request.user.clothes.all()
         
-        # Example logic - can be made more sophisticated
+        
         suggested_clothes = {
             'top': clothes.filter(category='TOP').first(),
             'bottom': clothes.filter(category='BOTTOM').first(),
