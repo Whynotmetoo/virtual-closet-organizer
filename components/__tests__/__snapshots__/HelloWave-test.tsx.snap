@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HelloWave component renders correctly 1`] = `
+<View
+  collapsable={false}
+  jestAnimatedStyle={
+    {
+      "value": {
+        "transform": [
+          {
+            "rotate": "0deg",
+          },
+        ],
+      },
+    }
+  }
+  style={
+    {
+      "transform": [
+        {
+          "rotate": "0deg",
+        },
+      ],
+    }
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "color": "#11181C",
+        },
+        {
+          "fontSize": 16,
+          "lineHeight": 24,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          "fontSize": 28,
+          "lineHeight": 32,
+          "marginTop": -6,
+        },
+      ]
+    }
+  >
+    👋
+  </Text>
+</View>
+`;

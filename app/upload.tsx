@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, Image } from 'react-native';
+
+import { StyleSheet, TouchableOpacity, Image, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -14,12 +16,17 @@ const clothTypes = [
   { label: "Pants", value: "pants", key: "2" },
   { label: "Dress", value: "dress", key: "3" },
   { label: "Jacket", value: "jacket", key: "4" },
+  { label: "Shoes", value: "shoes", key: "6" },
+  { label: "Other", value: "other", key: "7" },
+
 ];
 
 export default function UploadClothScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [clothTypeOpen, setClothTypeOpen] = useState(false);
   const [selectedClothType, setSelectedClothType] = useState(clothTypes[0].value);
+  const insets = useSafeAreaInsets();
+
 
   useEffect(() => {
     (async () => {
@@ -50,52 +57,54 @@ export default function UploadClothScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen 
-        options={{
-          title: "New Cloth",
-          headerShown: false, // Since you have your own custom header
-        }} 
-      />
-
-      <ThemedView style={styles.header}>
-        <TouchableOpacity onPress={() => router.push("/(tabs)/")}>
-          <AntDesign name="left" size={24} color="black" />
-        </TouchableOpacity>
-        <ThemedText style={styles.title}>Add New Cloth</ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.form}>
-        <ThemedText style={styles.label}>Cloth Type</ThemedText>
-        <DropDownPicker
-          open={clothTypeOpen}
-          value={selectedClothType}
-          items={clothTypes}
-          setOpen={setClothTypeOpen}
-          setValue={setSelectedClothType}
-          style={styles.dropdown}
-          dropDownContainerStyle={styles.dropdownContainer}
+    <View style={{ flex: 1, paddingTop: insets.top }}>
+      <ThemedView style={styles.container}>
+        <Stack.Screen 
+          options={{
+            title: "New Cloth",
+            headerShown: false,
+          }} 
         />
-        <ThemedText style={styles.label}>Photo</ThemedText>
-        <TouchableOpacity style={styles.imageButton} onPress={takePhoto}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.previewImage} />
-          ) : (
-            <AntDesign name="camera" size={40} color="black" />
-          )}
-        </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.submitButton}
-          onPress={() => {
-            // Handle submission here
-            router.back();
-          }}
-        >
-          <ThemedText style={styles.submitButtonText}>Save</ThemedText>
-        </TouchableOpacity>
+        <ThemedView style={styles.header}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/")}>
+            <AntDesign name="left" size={24} color="black" />
+          </TouchableOpacity>
+          <ThemedText style={styles.title}>Add New Cloth</ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.form}>
+          <ThemedText style={styles.label}>Cloth Type</ThemedText>
+          <DropDownPicker
+            open={clothTypeOpen}
+            value={selectedClothType}
+            items={clothTypes}
+            setOpen={setClothTypeOpen}
+            setValue={setSelectedClothType}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+          />
+          <ThemedText style={styles.label}>Photo</ThemedText>
+          <TouchableOpacity style={styles.imageButton} onPress={takePhoto}>
+            {image ? (
+              <Image source={{ uri: image }} style={styles.previewImage} />
+            ) : (
+              <AntDesign name="camera" size={40} color="black" />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.submitButton}
+            onPress={() => {
+              // Handle submission here
+              router.back();
+            }}
+          >
+            <ThemedText style={styles.submitButtonText}>Save</ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
       </ThemedView>
-    </ThemedView>
+    </View>
   );
 }
 
