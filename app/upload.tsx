@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
+
 import { StyleSheet, TouchableOpacity, Image, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -18,6 +18,7 @@ const clothTypes = [
   { label: "Jacket", value: "jacket", key: "4" },
   { label: "Shoes", value: "shoes", key: "6" },
   { label: "Other", value: "other", key: "7" },
+
 ];
 
 export default function UploadClothScreen() {
@@ -25,6 +26,7 @@ export default function UploadClothScreen() {
   const [clothTypeOpen, setClothTypeOpen] = useState(false);
   const [selectedClothType, setSelectedClothType] = useState(clothTypes[0].value);
   const insets = useSafeAreaInsets();
+
 
   useEffect(() => {
     (async () => {
