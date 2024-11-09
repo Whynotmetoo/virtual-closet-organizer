@@ -97,13 +97,16 @@ Returns a set of three clothing items, each with the same parameters as below:
 
 Parameters:
 ```json
-fields = (
-'id', # Int
-'username', # String 
-'email', # String
-'profile_picture', # Image URL
-'preferred_style' # String (category)
-)
+{
+    "id": 1,
+    "name": "Uniqlo T-Shirt",
+    "category": "TOP",
+    "image": "image",
+    "image_url": "image_url",
+    "color": "blue",
+    "season": "summer",
+    "occasion": "casual"
+}
 ```
 
 ## Image Specifications
