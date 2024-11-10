@@ -3,6 +3,10 @@ from rest_framework import serializers
 from .models import Outfit, OutfitHistory
 from closet_app.serializers import ClothingSerializer
 
+class OutfitSuggestionSerializer(serializers.Serializer):
+    activity = serializers.CharField(max_length=50)
+    feeling = serializers.CharField(max_length=50)
+
 class OutfitSerializer(serializers.ModelSerializer):
     clothes = ClothingSerializer(many=True, read_only=True)
 

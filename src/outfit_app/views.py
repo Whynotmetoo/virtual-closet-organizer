@@ -5,24 +5,39 @@ from rest_framework.response import Response
 
 from closet_app.serializers import ClothingSerializer
 from .models import Outfit, OutfitHistory
-from .serializers import OutfitSerializer, OutfitHistorySerializer
+from .serializers import OutfitSerializer, OutfitHistorySerializer, OutfitSuggestionSerializer
 from django.shortcuts import render
 
 class OutfitViewSet(viewsets.ModelViewSet):
-    serializer_class = OutfitSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.action == 'suggest' or self.action == 'list':
+            return OutfitSuggestionSerializer
+        return OutfitSerializer
+    
     def get_queryset(self):
         return Outfit.objects.filter(user=self.request.user)
+    
+    def list(self, request, *args, **kwargs):
+        return self.suggest(request, *args, **kwargs)
 
-    @action(detail=False, methods=['POST'])
+    @action(detail=False, methods=['GET', 'POST'])
     def suggest(self, request):
-        activity = request.data.get('activity')
-        feeling = request.data.get('feeling')
-        
+        if request.method == 'GET':
+            # Return empty form
+            serializer = OutfitSuggestionSerializer()
+            return Response(serializer.data)
+            
+        # POST handling
+        serializer = OutfitSuggestionSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+            
+        activity = serializer.validated_data.get('activity')
+        feeling = serializer.validated_data.get('feeling')
         
         clothes = self.request.user.clothes.all()
-        
         
         suggested_clothes = {
             'top': clothes.filter(category='TOP').first(),
@@ -30,9 +45,9 @@ class OutfitViewSet(viewsets.ModelViewSet):
             'shoes': clothes.filter(category='SHOES').first(),
         }
         
-        serializer = ClothingSerializer(
+        clothing_serializer = ClothingSerializer(
             [item for item in suggested_clothes.values() if item], 
             many=True,
             context={'request': request}
         )
-        return Response(serializer.data)
+        return Response(clothing_serializer.data)
