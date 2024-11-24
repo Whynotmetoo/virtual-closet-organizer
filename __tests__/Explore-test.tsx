@@ -6,6 +6,6 @@ describe('<HomeScreen />', () => {
   test('Text renders correctly on explore page', () => {
     const { getByText } = render(<HomeScreen />);
 
-    getByText('Choose Your Activity and Feeling');
+    getByText('Get Recommendations');
   });
 });

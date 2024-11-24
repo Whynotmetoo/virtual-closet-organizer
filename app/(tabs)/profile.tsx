@@ -10,10 +10,10 @@ import { ThemedView } from '@/components/ThemedView';
 function SettingItem({ title, href }: { title: string; href: string }) {
   return (
     <Link href={href as Href<string>} asChild>
-      <TouchableOpacity>
+      <TouchableOpacity style={styles.settingItemContainer}>
         <ThemedView style={styles.settingItem}>
-          <ThemedText>{title}</ThemedText>
-          <Ionicons name="chevron-forward" size={24} />
+          <ThemedText style={styles.settingText}>{title}</ThemedText>
+          <Ionicons name="chevron-forward" size={24} color="#4A90E2" />
         </ThemedView>
       </TouchableOpacity>
     </Link>
@@ -64,21 +64,37 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     overflow: 'hidden',
+    borderRadius: 75,
   },
   titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
+    padding: 20,
+    marginBottom: 10,
   },
   settingsContainer: {
-    gap: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  settingItemContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E8ED',
   },
   settingItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
-    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    backgroundColor: '#FFFFFF',
+  },
+  settingText: {
+    fontSize: 16,
+    color: '#2C3E50',
   },
 });
