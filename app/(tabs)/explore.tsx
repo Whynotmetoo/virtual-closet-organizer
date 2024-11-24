@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -40,36 +40,44 @@ export default function OutfitRecommendationScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>Choose Your Activity and Feeling</ThemedText>
+      <ThemedText style={styles.title}>Outfit Recommendation</ThemedText>
+      <ThemedText style={styles.subtitle}>Let's find your perfect outfit</ThemedText>
 
-      <ThemedText style={styles.label}>Select Activity:</ThemedText>
-      <ThemedView style={activityOpen ? { zIndex: 2 } : {}}>
-        <DropDownPicker
-          open={activityOpen}
-          value={selectedActivity}
-          items={activities}
-          setOpen={setActivityOpen}
-          setValue={setSelectedActivity}
-          style={styles.dropdown}
-          dropDownContainerStyle={styles.dropdownContainer}
-        />
-      </ThemedView>
+      <ThemedView style={styles.formContainer}>
+        <ThemedText style={styles.label}>Activity</ThemedText>
+        <ThemedView style={activityOpen ? { zIndex: 2 } : {}}>
+          <DropDownPicker
+            open={activityOpen}
+            value={selectedActivity}
+            items={activities}
+            setOpen={setActivityOpen}
+            setValue={setSelectedActivity}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            textStyle={styles.dropdownText}
+          />
+        </ThemedView>
 
-      <ThemedText style={styles.label}>Select Feeling:</ThemedText>
-      <ThemedView style={feelingOpen ? { zIndex: 1 } : {}}>
-        <DropDownPicker
-          open={feelingOpen}
-          value={selectedFeeling}
-          items={feelings}
-          setOpen={setFeelingOpen}
-          setValue={setSelectedFeeling}
-          style={styles.dropdown}
-          dropDownContainerStyle={styles.dropdownContainer}
-        />
-      </ThemedView>
+        <ThemedText style={styles.label}>Mood</ThemedText>
+        <ThemedView style={feelingOpen ? { zIndex: 1 } : {}}>
+          <DropDownPicker
+            open={feelingOpen}
+            value={selectedFeeling}
+            items={feelings}
+            setOpen={setFeelingOpen}
+            setValue={setSelectedFeeling}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            textStyle={styles.dropdownText}
+          />
+        </ThemedView>
 
-      <ThemedView style={styles.buttonContainer}>
-        <Button title="Get Outfit Recommendation" onPress={handleRecommendation} />
+        <TouchableOpacity 
+          style={styles.recommendButton}
+          onPress={handleRecommendation}
+        >
+          <ThemedText style={styles.buttonText}>Get Recommendations</ThemedText>
+        </TouchableOpacity>
       </ThemedView>
     </ThemedView>
   );
@@ -77,29 +85,59 @@ export default function OutfitRecommendationScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 8,
+    color: '#2C3E50',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#7F8C8D',
+    marginBottom: 30,
+  },
+  formContainer: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   label: {
-    fontSize: 18,
-    marginVertical: 10,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#34495E',
   },
   dropdown: {
-    width: '100%',
+    borderColor: '#E1E8ED',
+    borderRadius: 10,
     marginBottom: 20,
   },
   dropdownContainer: {
-    width: '100%',
+    borderColor: '#E1E8ED',
+    borderRadius: 10,
   },
-  buttonContainer: {
-    width: '100%',
-    marginTop: 20,
+  dropdownText: {
+    fontSize: 14,
+    color: '#2C3E50',
+  },
+  recommendButton: {
+    backgroundColor: '#4A90E2',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
