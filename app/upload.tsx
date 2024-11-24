@@ -59,48 +59,52 @@ export default function UploadClothScreen() {
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <ThemedView style={styles.container}>
-        <Stack.Screen 
-          options={{
-            title: "New Cloth",
-            headerShown: false,
-          }} 
-        />
+        <Stack.Screen options={{ headerShown: false }} />
 
         <ThemedView style={styles.header}>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/")}>
-            <AntDesign name="left" size={24} color="black" />
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => router.push("/(tabs)/")}
+          >
+            <AntDesign name="left" size={24} color="#4A90E2" />
           </TouchableOpacity>
-          <ThemedText style={styles.title}>Add New Cloth</ThemedText>
+          <ThemedText style={styles.title}>Add New Item</ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.form}>
-          <ThemedText style={styles.label}>Cloth Type</ThemedText>
-          <DropDownPicker
-            open={clothTypeOpen}
-            value={selectedClothType}
-            items={clothTypes}
-            setOpen={setClothTypeOpen}
-            setValue={setSelectedClothType}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-          />
-          <ThemedText style={styles.label}>Photo</ThemedText>
-          <TouchableOpacity style={styles.imageButton} onPress={takePhoto}>
-            {image ? (
-              <Image source={{ uri: image }} style={styles.previewImage} />
-            ) : (
-              <AntDesign name="camera" size={40} color="black" />
-            )}
-          </TouchableOpacity>
+          <ThemedView style={styles.formSection}>
+            <ThemedText style={styles.label}>Type of Clothing</ThemedText>
+            <DropDownPicker
+              open={clothTypeOpen}
+              value={selectedClothType}
+              items={clothTypes}
+              setOpen={setClothTypeOpen}
+              setValue={setSelectedClothType}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+              textStyle={styles.dropdownText}
+            />
+          </ThemedView>
+
+          <ThemedView style={styles.formSection}>
+            <ThemedText style={styles.label}>Photo</ThemedText>
+            <TouchableOpacity style={styles.imageButton} onPress={takePhoto}>
+              {image ? (
+                <Image source={{ uri: image }} style={styles.previewImage} />
+              ) : (
+                <ThemedView style={styles.uploadPlaceholder}>
+                  <AntDesign name="camera" size={40} color="#4A90E2" />
+                  <ThemedText style={styles.uploadText}>Take a photo</ThemedText>
+                </ThemedView>
+              )}
+            </TouchableOpacity>
+          </ThemedView>
 
           <TouchableOpacity 
             style={styles.submitButton}
-            onPress={() => {
-              // Handle submission here
-              router.back();
-            }}
+            onPress={() => router.back()}
           >
-            <ThemedText style={styles.submitButtonText}>Save</ThemedText>
+            <ThemedText style={styles.submitButtonText}>Save Item</ThemedText>
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
@@ -118,52 +122,82 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
+  backButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#F0F4F8',
+  },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 20,
-  },
-  dropdown: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  dropdownContainer: {
-    width: '100%',
+    fontSize: 24,
+    fontWeight: '700',
+    marginLeft: 15,
+    color: '#2C3E50',
   },
   form: {
-    gap: 20,
+    gap: 25,
+  },
+  formSection: {
+    backgroundColor: '#FFFFFF',
+    padding: 15,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: '#34495E',
   },
-  picker: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
+  dropdown: {
+    borderColor: '#E1E8ED',
+    borderRadius: 10,
+  },
+  dropdownContainer: {
+    borderColor: '#E1E8ED',
+    borderRadius: 10,
+  },
+  dropdownText: {
+    fontSize: 14,
+    color: '#2C3E50',
   },
   imageButton: {
     height: 200,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
+    borderStyle: 'dashed',
+  },
+  uploadPlaceholder: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 10,
+  },
+  uploadText: {
+    color: '#4A90E2',
+    fontSize: 16,
   },
   previewImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
+    borderRadius: 12,
   },
   submitButton: {
-    backgroundColor: 'black',
-    padding: 15,
-    borderRadius: 5,
+    backgroundColor: '#4A90E2',
+    padding: 16,
+    borderRadius: 12,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   submitButtonText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 });
