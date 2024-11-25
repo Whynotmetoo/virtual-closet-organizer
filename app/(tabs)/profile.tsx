@@ -50,7 +50,7 @@ export default function AccountScreen() {
         <SettingItem title="Notifications" href="/settings/notifications" />
         <SettingItem title="Payment Methods" href="/settings/payment" />
         <SettingItem title="Privacy Settings" href="/settings/privacy" />
-        <SettingItem title="Account Deletion" href="/settings/delete-account" />
+        <SettingItem title="Logout" href="/settings/delete-account" />
       </ThemedView>
     </ParallaxScrollView>
   );
