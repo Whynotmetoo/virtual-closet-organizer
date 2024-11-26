@@ -1,32 +1,53 @@
 import { useState, useEffect } from 'react';
 
 import { StyleSheet, TouchableOpacity, Image, View } from 'react-native';
-import { router, Stack } from 'expo-router';
+import { router, Stack, Redirect } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as FileSystem from 'expo-file-system';
+import { CATEGORY } from './constants'
+
+const getFileInfo = async (uri: string) => {
+  try {
+    const fileInfo = await FileSystem.getInfoAsync(uri);
+    console.log('File Info:', fileInfo);
+
+    if (!fileInfo.exists) {
+      throw new Error('File does not exist at the given URI');
+    }
+    return fileInfo;
+  } catch (error) {
+    console.error('Error fetching file info:', error);
+  }
+};
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useSession } from '@/utils/ctx'
+import { post } from '@/utils/request'
 
 const clothTypes = [
-  { label: "Shirt", value: "shirt", key: "1" },
-  { label: "Pants", value: "pants", key: "2" },
-  { label: "Dress", value: "dress", key: "3" },
-  { label: "Jacket", value: "jacket", key: "4" },
-  { label: "Shoes", value: "shoes", key: "6" },
-  { label: "Other", value: "other", key: "7" },
-
+  { label: "top", value: CATEGORY.TOP, key: "1" },
+  { label: "dress", value: CATEGORY.DRESS, key: "2" },
+  { label: "bottom", value: CATEGORY.BOTTOM, key: "3" },
+  { label: "shoes", value: CATEGORY.SHOES, key: "4" },
+  { label: "outerwear", value: CATEGORY.OUTERWEAR, key: "5" },
+  { label: "accessories", value: CATEGORY.ACCESSORIES, key: "6" },
 ];
+
 
 export default function UploadClothScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [clothTypeOpen, setClothTypeOpen] = useState(false);
   const [selectedClothType, setSelectedClothType] = useState(clothTypes[0].value);
   const insets = useSafeAreaInsets();
+  const { session, isLoading } = useSession();
 
+  if(!session) {
+    return <Redirect href="/login" />
+  }
 
   useEffect(() => {
     (async () => {
@@ -56,6 +77,36 @@ export default function UploadClothScreen() {
     }
   };
 
+  const handleSave = async() => {
+    if (!image) return;
+    const formData = new FormData();
+    
+    const fileName = image.split('/').pop() || 'upload.jpg';
+    
+    formData.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: fileName,
+    } as any);
+
+    formData.append('category', selectedClothType);
+    // formData.append('name', 'testname2');
+    // formData.append('color', 'red');
+    // formData.append('season', 'winter');
+    // formData.append('occasion', 'work');
+
+    const response = await post('http://172.20.10.14:8000/api/clothes/', 
+      formData,
+      {
+        headers: {
+        'Authorization': 'Bearer ' + session.access,
+        'Content-Type': 'multipart/form-data',
+      }
+    },
+    );
+    
+    console.log(response);
+  }
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <ThemedView style={styles.container}>
@@ -72,21 +123,23 @@ export default function UploadClothScreen() {
         </ThemedView>
 
         <ThemedView style={styles.form}>
-          <ThemedView style={styles.formSection}>
+          <ThemedView style={[styles.formSection, { zIndex: 2 }]}>
             <ThemedText style={styles.label}>Type of Clothing</ThemedText>
-            <DropDownPicker
-              open={clothTypeOpen}
-              value={selectedClothType}
-              items={clothTypes}
-              setOpen={setClothTypeOpen}
-              setValue={setSelectedClothType}
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropdownContainer}
-              textStyle={styles.dropdownText}
-            />
+            <ThemedView style={clothTypeOpen ? { zIndex: 2 } : {}}>
+              <DropDownPicker
+                open={clothTypeOpen}
+                value={selectedClothType}
+                items={clothTypes}
+                setOpen={setClothTypeOpen}
+                setValue={setSelectedClothType}
+                style={styles.dropdown}
+                dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 2000 }]}
+                textStyle={styles.dropdownText}
+              />
+            </ThemedView>
           </ThemedView>
 
-          <ThemedView style={styles.formSection}>
+          <ThemedView style={[styles.formSection, { zIndex: 1 }]}>
             <ThemedText style={styles.label}>Photo</ThemedText>
             <TouchableOpacity style={styles.imageButton} onPress={takePhoto}>
               {image ? (
@@ -102,7 +155,7 @@ export default function UploadClothScreen() {
 
           <TouchableOpacity 
             style={styles.submitButton}
-            onPress={() => router.back()}
+            onPress={handleSave}
           >
             <ThemedText style={styles.submitButtonText}>Save Item</ThemedText>
           </TouchableOpacity>

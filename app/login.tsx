@@ -6,15 +6,31 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TextInput } from 'react-native';
+import { post } from '@/utils/request'
+import { useSession } from '@/utils/ctx';
 
 export default function LoginScreen() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const insets = useSafeAreaInsets();
+  const { signIn } = useSession()
 
-  const handleLogin = () => {
-    // TODO: Implement login logic
-    router.push('/(tabs)/');
+  const handleLogin = async () => {
+    try{
+        const response = await post<{refresh: string, access: string}>('/api/auth/token/', {
+            username: name,
+            password,
+        })
+        if(response.access) {
+            signIn(response)
+            router.push('/(tabs)/');
+        } else {
+            alert('Login fail')
+        }
+    } catch {
+        alert('Login fail')
+    }
+    
   };
 
   return (

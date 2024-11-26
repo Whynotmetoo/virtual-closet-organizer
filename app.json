@@ -14,7 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.virtual-closet-organizer"
+      "bundleIdentifier": "com.anonymous.virtual-closet-organizer",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "We need access to your photo library to upload images."
+      }
     },
     "android": {
       "adaptiveIcon": {
