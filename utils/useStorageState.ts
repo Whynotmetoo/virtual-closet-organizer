@@ -4,6 +4,11 @@ import { Platform } from 'react-native';
 
 type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
 
+interface Session {
+    access: string
+    refresh: string
+}
+
 function useAsyncState<T>(
   initialValue: [boolean, T | null] = [true, null],
 ): UseStateHook<T> {
@@ -13,13 +18,13 @@ function useAsyncState<T>(
   ) as UseStateHook<T>;
 }
 
-export async function setStorageItemAsync(key: string, value: string | null) {
+export async function setStorageItemAsync(key: string, value: Session | null) {
   if (Platform.OS === 'web') {
     try {
       if (value === null) {
         localStorage.removeItem(key);
       } else {
-        localStorage.setItem(key, value);
+        localStorage.setItem(key, JSON.stringify(value));
       }
     } catch (e) {
       console.error('Local storage is unavailable:', e);
@@ -28,35 +33,35 @@ export async function setStorageItemAsync(key: string, value: string | null) {
     if (value == null) {
       await SecureStore.deleteItemAsync(key);
     } else {
-      await SecureStore.setItemAsync(key, value);
+      await SecureStore.setItemAsync(key, JSON.stringify(value));
     }
   }
 }
 
-export function useStorageState(key: string): UseStateHook<string> {
+export function useStorageState(key: string): UseStateHook<Session> {
   // Public
-  const [state, setState] = useAsyncState<string>();
+  const [state, setState] = useAsyncState<Session>();
 
   // Get
   useEffect(() => {
     if (Platform.OS === 'web') {
       try {
         if (typeof localStorage !== 'undefined') {
-          setState(localStorage.getItem(key));
+          setState(localStorage.getItem(key) && JSON.parse(localStorage.getItem(key) as string));
         }
       } catch (e) {
         console.error('Local storage is unavailable:', e);
       }
     } else {
       SecureStore.getItemAsync(key).then(value => {
-        setState(value);
+        setState(value && JSON.parse(value));
       });
     }
   }, [key]);
 
   // Set
   const setValue = useCallback(
-    (value: string | null) => {
+    (value: Session | null) => {
       setState(value);
       setStorageItemAsync(key, value);
     },
