@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react-native';
 
-import HomeScreen from '@/app/(tabs)/explore';
+import HomeScreen from '@/app/(tabs)/assistant';
 
-describe('<HomeScreen />', () => {
+describe('<Assistant />', () => {
   test('Text renders correctly on explore page', () => {
     const { getByText } = render(<HomeScreen />);
 
