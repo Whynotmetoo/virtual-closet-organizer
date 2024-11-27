@@ -1,6 +1,7 @@
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, Modal, View, FlatList, TouchableWithoutFeedback, GestureResponderEvent } from 'react-native';
 import { router } from 'expo-router';
 import { useEffect, useState  } from 'react';
+import { Alert } from 'react-native';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -8,9 +9,9 @@ import { ThemedView } from '@/components/ThemedView';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useSession } from '@/utils/ctx'
-import { get } from '@/utils/request'
+import { get, del } from '@/utils/request'
 import { Cloth } from './type'
-import { CLOTH_CATEGORY } from '../constants';
+import { CLOTH_CATEGORY, CATEGORY } from '../constants';
 
 const imageUrls = [
   'https://picsum.photos/200/200?random=1',
@@ -25,22 +26,62 @@ export default function HomeScreen() {
   const { session } = useSession()
   const [clothList, setClothList ] = useState<Cloth[]>()
   const [showFilter, setShowFilter] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CATEGORY>(CLOTH_CATEGORY[0].value);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
+
+  const fetchList = async (category: CATEGORY) => {
+    const response = await get<Cloth[]>('/api/clothes/by_category/', {
+        params: { category: category },
+        headers: {
+          'Authorization': 'Bearer ' + session?.access,
+        }
+      })
+    if(response && response.length > 0) {
+      setClothList(response)
+    } else {
+      setClothList([])
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    const response = await del(`/api/clothes/${id}/`, {
+      headers: {
+        'Authorization': 'Bearer ' + session?.access,
+      }
+    })
+    fetchList(selectedCategory)
+    setModalVisible(false);
+    setSelectedImageId(null)
+    alert('Successfully detete this clothes')
+  }
 
   useEffect(() => {
-    const fetchList = async () => {
-      const response = await get<Cloth[]>('/api/clothes/', {
-          headers: {
-            'Authorization': 'Bearer ' + session?.access,
-          }
-        })
-      if(response && response.length > 0) {
-        setClothList(response)
+    fetchList(selectedCategory)
+  }, [])
+
+  const handleCategoryChange = (category: CATEGORY) => {
+    fetchList(category)
+    setSelectedCategory(category)
+  }
+
+  const handleImageLongPress = (cloth: Cloth, event: GestureResponderEvent) => {
+    const { pageX, pageY } = event.nativeEvent;
+    setModalPosition({ x: pageX, y: pageY });
+    setSelectedImageId(cloth.id);
+    setModalVisible(true);
+  };
+
+  const handleOptionSelect = (option: string) => {
+    if (selectedImageId) {
+      if (option === "Update") {
+        console.log("Update pressed for image ID:", selectedImageId);
+      } else if (option === "Delete") {
+        handleDelete(selectedImageId);
       }
     }
-
-    fetchList()
-}, [])
+  };
 
   return (
     <ParallaxScrollView
@@ -75,7 +116,7 @@ export default function HomeScreen() {
           <AntDesign name="filter" size={18} color="#4A90E2" />
         </TouchableOpacity>
       </ThemedView>
-      <ThemedView>
+      <ThemedView style={{zIndex: 1 }}>
       {showFilter && (
         <ThemedView style={styles.filterDropdown}>
           {CLOTH_CATEGORY.map((category) => (
@@ -83,7 +124,7 @@ export default function HomeScreen() {
               key={category.key}
               style={styles.filterItem}
               onPress={() => {
-                setSelectedCategory(category.value);
+                handleCategoryChange(category.value);
                 setShowFilter(false);
               }}
             >
@@ -97,11 +138,43 @@ export default function HomeScreen() {
       {/* Image List */}
       <ThemedView style={styles.closetList}>
         {clothList?.map((cloth, index) => (
-          <TouchableOpacity key={index} style={styles.imageContainer}>
+          <TouchableOpacity 
+            key={index} 
+            style={styles.imageContainer}
+            onLongPress={(event) => handleImageLongPress(cloth, event)}
+          >
             <Image source={{ uri: cloth.image }} style={styles.image} />
           </TouchableOpacity>
         ))}
       </ThemedView>
+
+      {/* Modal for options */}
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => {
+            setModalVisible(false)
+            setSelectedImageId(null)
+          }}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
+        <View style={[styles.modalContainer, { top: modalPosition.y, left: modalPosition.x }]}>
+          <FlatList
+            data={["Update", "Delete"]}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleOptionSelect(item)}>
+                <View style={styles.optionItem}>
+                  <ThemedText style={styles.filterText}>{item}</ThemedText>
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item}
+          />
+        </View>
+      </Modal>
     </ParallaxScrollView>
   );
 }
@@ -179,6 +252,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingHorizontal: 15,
     gap: 12,
+    minHeight: 250
   },
   imageContainer: {
     width: '47%',
@@ -223,5 +297,20 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E1E8ED',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    position: 'absolute',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    elevation: 5,
+    padding: 10,
+    zIndex: 1000,
+  },
+  optionItem: {
+    padding: 10,
   },
 });

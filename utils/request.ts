@@ -85,7 +85,7 @@ const put = async <T>(url: string, data?: object): Promise<T> => {
 // Generic DELETE request function
 const del = async <T>(url: string, params?: object): Promise<T> => {
   try {
-    const response: AxiosResponse<T> = await axiosInstance.delete(url, { params });
+    const response: AxiosResponse<T> = await axiosInstance.delete(url, params);
     return response.data;
   } catch (error) {
     throw error;
