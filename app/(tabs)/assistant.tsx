@@ -39,9 +39,9 @@ export default function OutfitRecommendationScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: 80 }]}>
       <ThemedText style={styles.title}>Outfit Recommendation</ThemedText>
-      <ThemedText style={styles.subtitle}>Let's find your perfect outfit</ThemedText>
+      <ThemedText style={styles.subtitle}>Let's find your perfect outfit for today</ThemedText>
 
       <ThemedView style={styles.formContainer}>
         <ThemedText style={styles.label}>Activity</ThemedText>
@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
+    paddingTop: 10,
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 8,
