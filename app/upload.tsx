@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import { StyleSheet, TouchableOpacity, Image, View } from 'react-native';
-import { router, Stack, Redirect } from 'expo-router';
+import { StyleSheet, TouchableOpacity, Image, View, TextInput } from 'react-native';
+import { router, Stack, Redirect, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as FileSystem from 'expo-file-system';
@@ -26,7 +26,8 @@ import { ThemedView } from '@/components/ThemedView';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSession } from '@/utils/ctx'
-import { post } from '@/utils/request'
+import { post, get, patch } from '@/utils/request'
+import { Cloth } from './(tabs)/type'
 
 const clothTypes = [
   { label: "top", value: CATEGORY.TOP, key: "1" },
@@ -42,12 +43,36 @@ export default function UploadClothScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [clothTypeOpen, setClothTypeOpen] = useState(false);
   const [selectedClothType, setSelectedClothType] = useState(clothTypes[0].value);
+  const [clothData, setClothData] = useState<Cloth>()
   const insets = useSafeAreaInsets();
   const { session, isLoading } = useSession();
+  const { id } = useLocalSearchParams()
+  const [name, setName] = useState<string>('');
 
   if(!session) {
     return <Redirect href="/login" />
   }
+
+  const getClothes = async (id: number) => {
+    const response = await get<Cloth>(`/api/clothes/${id}/`, {
+        headers: {
+          'Authorization': 'Bearer ' + session?.access,
+        }
+      })
+    console.log(response)
+    if(response) {
+      // setClothData(response)
+      setImage(response.image)
+      setName(response.name)
+      setSelectedClothType(response.category)
+    }
+  }
+
+  useEffect(() => {
+    if(id) {
+      getClothes(Number(id))
+    }
+  }, [])
 
   useEffect(() => {
     (async () => {
@@ -90,23 +115,36 @@ export default function UploadClothScreen() {
     } as any);
 
     formData.append('category', selectedClothType);
-    // formData.append('name', 'testname2');
+    formData.append('name', name);
     // formData.append('color', 'red');
     // formData.append('season', 'winter');
     // formData.append('occasion', 'work');
-
-    const response = await post('http://172.20.10.14:8000/api/clothes/', 
-      formData,
-      {
-        headers: {
-        'Authorization': 'Bearer ' + session.access,
-        'Content-Type': 'multipart/form-data',
-      }
-    },
-    );
+    if(id) {
+      const response = await patch(`/api/clothes/${id}/`, 
+        formData,
+        {
+          headers: {
+          'Authorization': 'Bearer ' + session.access,
+          'Content-Type': 'multipart/form-data',
+          }
+        },
+      );
+      if(response) alert('clothes updated')
+    }else {
+      const response = await post('/api/clothes/', 
+        formData,
+        {
+          headers: {
+          'Authorization': 'Bearer ' + session.access,
+          'Content-Type': 'multipart/form-data',
+          }
+        },
+      );
+      if(response) alert('clothes saved')
+    }
     
-    console.log(response);
   }
+
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <ThemedView style={styles.container}>
@@ -120,6 +158,16 @@ export default function UploadClothScreen() {
             <AntDesign name="left" size={24} color="#4A90E2" />
           </TouchableOpacity>
           <ThemedText style={styles.title}>Add New Item</ThemedText>
+        </ThemedView>
+
+        <ThemedView style={[styles.formSection, { zIndex: 1 }]}>
+          <ThemedText style={styles.label}>Name</ThemedText>
+          <TextInput 
+            style={[styles.input, { backgroundColor: '#F0F4F8' }]}
+            placeholder="Enter name" 
+            value={name}
+            onChangeText={(text) => setName(text)}
+          />
         </ThemedView>
 
         <ThemedView style={styles.form}>
@@ -138,6 +186,8 @@ export default function UploadClothScreen() {
               />
             </ThemedView>
           </ThemedView>
+
+          
 
           <ThemedView style={[styles.formSection, { zIndex: 1 }]}>
             <ThemedText style={styles.label}>Photo</ThemedText>
@@ -252,5 +302,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  input: {
+    borderColor: '#E1E0ED',
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: '#F0F4F8',
   },
 });

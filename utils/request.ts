@@ -73,9 +73,9 @@ const post = async <T>(url: string, data?: object, config?: object): Promise<T> 
 };
 
 // Generic PUT request function
-const put = async <T>(url: string, data?: object): Promise<T> => {
+const put = async <T>(url: string, data?: object, config?: object): Promise<T> => {
   try {
-    const response: AxiosResponse<T> = await axiosInstance.put(url, data);
+    const response: AxiosResponse<T> = await axiosInstance.put(url, data, config);
     return response.data;
   } catch (error) {
     throw error;
@@ -92,6 +92,15 @@ const del = async <T>(url: string, params?: object): Promise<T> => {
   }
 };
 
+const patch = async <T>(url: string, data?: object, config?: object): Promise<T> => {
+  try {
+    const response: AxiosResponse<T> = await axiosInstance.patch(url, data, config);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 // Exporting the utility functions
-export { get, post, put, del };
+export { get, post, put, del, patch };

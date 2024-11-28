@@ -76,10 +76,11 @@ export default function HomeScreen() {
   const handleOptionSelect = (option: string) => {
     if (selectedImageId) {
       if (option === "Update") {
-        console.log("Update pressed for image ID:", selectedImageId);
+        router.push(`/upload?id=${selectedImageId}`);
       } else if (option === "Delete") {
         handleDelete(selectedImageId);
       }
+      setModalVisible(false);
     }
   };
 
@@ -100,7 +101,7 @@ export default function HomeScreen() {
         <ThemedText style={styles.sectionTitle}>Upload a new cloth</ThemedText>
         <TouchableOpacity 
           style={styles.iconButton} 
-          onPress={() => router.push({pathname: '/upload', params: { title: 'Upload' }})}
+          onPress={() => router.push({pathname: '/upload'})}
         >
           <Entypo name="plus" size={32} color="#4A90E2" />
         </TouchableOpacity>
