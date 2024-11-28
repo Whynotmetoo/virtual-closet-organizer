@@ -6,23 +6,25 @@ import { Link, type Href } from 'expo-router';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useSession } from '@/utils/ctx';
 
-function SettingItem({ title, href }: { title: string; href: string }) {
+
+function SettingItem({ title, href, onPress }: { title: string; href: string; onPress?: () => void }) {
   return (
-    <Link href={href as Href<string>} asChild>
-      <TouchableOpacity style={styles.settingItemContainer}>
+      <TouchableOpacity style={styles.settingItemContainer} onPress={onPress}>
         <ThemedView style={styles.settingItem}>
           <ThemedText style={styles.settingText}>{title}</ThemedText>
           <Ionicons name="chevron-forward" size={24} color="#4A90E2" />
         </ThemedView>
       </TouchableOpacity>
-    </Link>
   );
 }
 
 export default function AccountScreen() {
   const [headerImageUri, setHeaderImageUri] = useState('');
   const [headerBackgroundImageUri, setHeaderBackgroundImageUri] = useState('');
+  const { signOut } = useSession();
+
 
   useEffect(() => {
     const randomSeed = Math.random().toString(36).substring(7); 
@@ -50,7 +52,9 @@ export default function AccountScreen() {
         <SettingItem title="Notifications" href="/settings/notifications" />
         <SettingItem title="Payment Methods" href="/settings/payment" />
         <SettingItem title="Privacy Settings" href="/settings/privacy" />
-        <SettingItem title="Logout" href="/settings/delete-account" />
+        <SettingItem title="Logout" href="/settings/logout" onPress={() => {
+          signOut();
+        }} />
       </ThemedView>
     </ParallaxScrollView>
   );

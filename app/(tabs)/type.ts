@@ -7,4 +7,13 @@ export interface Cloth {
     occasion: string
     season: string
     id: number
+    name: string
+}
+
+export interface SuggestionResponse {
+    reasoning: string
+    outfit: {
+        category: CATEGORY
+        image: string
+    }[]
 }
