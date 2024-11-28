@@ -13,11 +13,11 @@ class Clothing(models.Model):
     ]
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clothes')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     image = models.ImageField(upload_to='clothing_images/')
-    color = models.CharField(max_length=50)
-    season = models.CharField(max_length=20)
-    occasion = models.CharField(max_length=50)
+    color = models.CharField(max_length=50, blank=True)
+    season = models.CharField(max_length=20, blank=True)
+    occasion = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_worn = models.DateTimeField(null=True, blank=True)

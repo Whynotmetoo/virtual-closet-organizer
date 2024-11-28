@@ -30,6 +30,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '[::1]',  # IPv6 localhost
+    '172.20.10.14',
+    '10.150.13.19',
 ]
 if DEBUG:
     ALLOWED_HOSTS = ['*']  # Allows all hosts in development
@@ -153,6 +155,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",   # Additional React development
     "exp://localhost:19000",   # Expo Go app
     "exp://127.0.0.1:19000",  # Expo Go alternative
+    "http://localhost:8081",
 ]
 
 # Add CORS_ALLOW_CREDENTIALS for JWT handling

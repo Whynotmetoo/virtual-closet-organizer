@@ -6,7 +6,13 @@ from rest_framework.response import Response
 from .models import Clothing
 from .serializers import ClothingSerializer
 from django.shortcuts import render
+from utils.image_utils import get_image_color
+from PIL import Image
+import clip
+import torch
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model, preprocess = clip.load("ViT-B/32", device)
 
 class ClothingViewSet(viewsets.ModelViewSet):
     serializer_class = ClothingSerializer
@@ -17,7 +23,10 @@ class ClothingViewSet(viewsets.ModelViewSet):
         return Clothing.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        clothing_item = serializer.save(user=self.request.user)
+
+        clothing_item.color = get_image_color(clothing_item.image.path)
+        clothing_item.save()
 
     @action(detail=False, methods=['GET'])
     def by_category(self, request):
