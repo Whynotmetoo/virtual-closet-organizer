@@ -49,9 +49,6 @@ export default function UploadClothScreen() {
   const { id } = useLocalSearchParams()
   const [name, setName] = useState<string>('');
 
-  if(!session) {
-    return <Redirect href="/login" />
-  }
 
   const getClothes = async (id: number) => {
     const response = await get<Cloth>(`/api/clothes/${id}/`, {
@@ -84,6 +81,11 @@ export default function UploadClothScreen() {
       }
     })();
   }, []);
+
+  if(!session) {
+    return <Redirect href="/login" />
+  }
+
 
   const takePhoto = async () => {
     try {
